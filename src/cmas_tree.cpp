@@ -7,7 +7,7 @@
 /*****************************************************************************/
 // Tree config
 
-int treeFrequencyBoundaries[] = {0, 7, 15, 22, 30, 35, 40, 50}; // to hold starts of each frequency
+int treeFrequencyBoundaries[] = {0, 10, 18, 25, 34, 39, 43, 50}; // to hold starts of each frequency
 
 
 
@@ -29,9 +29,6 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(numPixels, ledDataPin, NEO_GRB + NEO
 // NOT CONSTS
 // YOU CAN CHANGE THESE, BUT IT WON'T HELP ANYTHING, THEY'LL CHANGE LATER ANYWAY
 double maxBass = 0;
-// int redPins[8];
-// int greenPins[8];
-// int bluePins[8];
 int bright = 0;
 int spectrumValue[7]; // to hold a2d values
 
@@ -98,16 +95,17 @@ void ledGrEqBrightness()
         int val = spectrumValue[i] / 4;
 
         // if it's low, just turn it off
-        if      (val <  48) { bright = 0;   }
+        if      (val <  24) { bright = 0;   }
+        else if (val <  48) { bright = 24;  }
         else if (val <  96) { bright = 48;  }
         else if (val < 128) { bright = 64;  }
         else if (val < 192) { bright = 128; }
         else if (val < 224) { bright = 192; }
         else { bright = 256; }
 
-        for (int j = treeFrequencyBoundaries[i]; j < treeFrequencyBoundaries[i+1] - 1; j++)
+        for (int j = treeFrequencyBoundaries[i]; j < treeFrequencyBoundaries[i+1]; j++)
         {
-          strip.setPixelColor(j, bright, 0, 0);
+          strip.setPixelColor(j, val, 0, 0);
         }
     }
     strip.show();
@@ -193,11 +191,17 @@ void setup()
     strip.begin();
     strip.show();
 
+    // // Test for all lights on
+    // for (int i = 0; i < strip.numPixels(); i++)
+    // {
+    //   strip.setPixelColor(i, 92, 92, 92);
+    // }
+    // strip.show();
 }
 
 void loop()
 {
-    clearLeds();
+    // clearLeds();
     getValues();
     printSerialValues();
 
@@ -219,4 +223,5 @@ void loop()
       ledGrEqBrightness();
     // }
     delay(50);
+
 }
