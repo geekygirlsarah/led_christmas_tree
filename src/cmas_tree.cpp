@@ -7,8 +7,8 @@
 /*****************************************************************************/
 // Tree config
 
-int treeFrequencyBoundaries[] = {0, 10, 18, 25, 34, 39, 43, 50}; // to hold starts of each frequency
-
+int treeFrequencyBoundaries[] = {0, 11, 21, 31, 39, 43, 47, 50}; // to hold starts of each frequency
+int freqValueBoundaries[] = {200, 500, 1024};
 
 
 /*****************************************************************************/
@@ -90,22 +90,44 @@ void printSerialValues() {
 
 void ledGrEqBrightness()
 {
+    int redBright, greenBright, blueBright;
     for (int i = 0; i < 7; i++)
     {
-        int val = spectrumValue[i] / 4;
+        int val = spectrumValue[i];
 
-        // if it's low, just turn it off
-        if      (val <  24) { bright = 0;   }
-        else if (val <  48) { bright = 24;  }
-        else if (val <  96) { bright = 48;  }
-        else if (val < 128) { bright = 64;  }
-        else if (val < 192) { bright = 128; }
-        else if (val < 224) { bright = 192; }
-        else { bright = 256; }
+        if (val < freqValueBoundaries[0])
+        {
+            redBright = 0;
+            greenBright = val / freqValueBoundaries[0] * 255;
+            blueBright = 0;
+        }
+        else if (val < freqValueBoundaries[1])
+        {
+          redBright = (val - freqValueBoundaries[0]) / (freqValueBoundaries[1]-freqValueBoundaries[0]) * 255;
+          greenBright = 255;
+          blueBright = (val - freqValueBoundaries[0]) / (freqValueBoundaries[1]-freqValueBoundaries[0]) * 255;
+        }
+        else
+        {
+          redBright = 255;
+          greenBright = 255 - ((val - freqValueBoundaries[1]) / (freqValueBoundaries[2]-freqValueBoundaries[1]) * 255);
+          blueBright = 255 - ((val - freqValueBoundaries[1]) / (freqValueBoundaries[2]-freqValueBoundaries[1]) * 255);
+
+        }
+
+#ifdef SERIAL_VALUES
+      Serial.print("Red: ");
+      Serial.print(redBright);
+      Serial.print("  Green: " );
+      Serial.print(greenBright);
+      Serial.print("  Blue: ");
+      Serial.println(blueBright);
+
+#endif
 
         for (int j = treeFrequencyBoundaries[i]; j < treeFrequencyBoundaries[i+1]; j++)
         {
-          strip.setPixelColor(j, val, 0, 0);
+          strip.setPixelColor(j, greenBright, redBright, blueBright);
         }
     }
     strip.show();
