@@ -7,8 +7,9 @@
 /*****************************************************************************/
 // Tree config
 
-int treeFrequencyBoundaries[] = {0, 11, 21, 31, 39, 43, 47, 50}; // to hold starts of each frequency
-int freqValueBoundaries[] = {200, 500, 1024};
+// to hold starts of each frequency
+int treeFrequencyBoundaries[] = {0, 11, 21, 31, 39, 43, 50, 50}; // old: .... 47, 50
+int freqValueBoundaries[] = {400, 600, 850};
 
 
 /*****************************************************************************/
